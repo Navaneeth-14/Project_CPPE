@@ -1,0 +1,145 @@
+<svg viewBox="0 0 1000 700" xmlns="http://www.w3.org/2000/svg">
+  <!-- Title -->
+  <text x="500" y="35" font-family="Arial, sans-serif" font-size="26" font-weight="bold" text-anchor="middle" fill="#232F3E">
+    CineMatch - Technical Architecture Overview
+  </text>
+  
+  <!-- Frontend Layer -->
+  <g id="frontend-layer">
+    <rect x="50" y="80" width="900" height="100" fill="#FFE0B2" stroke="#FF9900" stroke-width="3" rx="5"/>
+    <text x="500" y="110" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#FF9900">
+      Frontend Layer
+    </text>
+    
+    <rect x="100" y="125" width="180" height="40" fill="white" stroke="#FF9900" stroke-width="2" rx="3"/>
+    <text x="190" y="150" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle">HTML/CSS/JS</text>
+    
+    <rect x="310" y="125" width="150" height="40" fill="white" stroke="#FF9900" stroke-width="2" rx="3"/>
+    <text x="385" y="150" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle">4 Tab Interface</text>
+    
+    <rect x="490" y="125" width="150" height="40" fill="white" stroke="#FF9900" stroke-width="2" rx="3"/>
+    <text x="565" y="142" font-family="Arial, sans-serif" font-size="11" text-anchor="middle">JWT Auth</text>
+    <text x="565" y="157" font-family="Arial, sans-serif" font-size="11" text-anchor="middle">Session Mgmt</text>
+    
+    <rect x="670" y="125" width="220" height="40" fill="white" stroke="#FF9900" stroke-width="2" rx="3"/>
+    <text x="780" y="150" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle">Single-Page Application</text>
+  </g>
+  
+  <!-- Arrow -->
+  <line x1="500" y1="180" x2="500" y2="220" stroke="#232F3E" stroke-width="3" marker-end="url(#arrowhead)"/>
+  <text x="520" y="205" font-family="Arial, sans-serif" font-size="12" fill="#232F3E">HTTP/REST API</text>
+  
+  <!-- API Layer -->
+  <g id="api-layer">
+    <rect x="50" y="220" width="900" height="100" fill="#FFE5B2" stroke="#FF9900" stroke-width="3" rx="5"/>
+    <text x="500" y="250" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#FF9900">
+      API Layer (FastAPI)
+    </text>
+    
+    <rect x="80" y="265" width="120" height="40" fill="white" stroke="#FF9900" stroke-width="2" rx="3"/>
+    <text x="140" y="290" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle">18 Endpoints</text>
+    
+    <rect x="220" y="265" width="130" height="40" fill="white" stroke="#FF9900" stroke-width="2" rx="3"/>
+    <text x="285" y="285" font-family="Arial, sans-serif" font-size="11" text-anchor="middle">/auth/* (3)</text>
+    
+    <rect x="370" y="265" width="130" height="40" fill="white" stroke="#FF9900" stroke-width="2" rx="3"/>
+    <text x="435" y="285" font-family="Arial, sans-serif" font-size="11" text-anchor="middle">/me/* (5)</text>
+    
+    <rect x="520" y="265" width="130" height="40" fill="white" stroke="#FF9900" stroke-width="2" rx="3"/>
+    <text x="585" y="285" font-family="Arial, sans-serif" font-size="11" text-anchor="middle">/moods/* (6)</text>
+    
+    <rect x="670" y="265" width="130" height="40" fill="white" stroke="#FF9900" stroke-width="2" rx="3"/>
+    <text x="735" y="285" font-family="Arial, sans-serif" font-size="11" text-anchor="middle">/chat/* (4)</text>
+    
+    <rect x="820" y="265" width="120" height="40" fill="white" stroke="#FF9900" stroke-width="2" rx="3"/>
+    <text x="880" y="285" font-family="Arial, sans-serif" font-size="11" text-anchor="middle">CORS enabled</text>
+  </g>
+  
+  <!-- Arrow -->
+  <line x1="500" y1="320" x2="500" y2="360" stroke="#232F3E" stroke-width="3" marker-end="url(#arrowhead)"/>
+  
+  <!-- Business Logic Layer -->
+  <g id="business-layer">
+    <rect x="50" y="360" width="900" height="130" fill="#C8E6C9" stroke="#569A31" stroke-width="3" rx="5"/>
+    <text x="500" y="390" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#569A31">
+      Business Logic Layer
+    </text>
+    
+    <rect x="80" y="405" width="160" height="70" fill="white" stroke="#569A31" stroke-width="2" rx="3"/>
+    <text x="160" y="425" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle">Hybrid</text>
+    <text x="160" y="441" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle">Recommender</text>
+    <text x="160" y="460" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">Content + Collaborative</text>
+    
+    <rect x="260" y="405" width="140" height="70" fill="white" stroke="#569A31" stroke-width="2" rx="3"/>
+    <text x="330" y="425" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle">Mood Engine</text>
+    <text x="330" y="445" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">Genre boosting</text>
+    <text x="330" y="460" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">Score reranking</text>
+    
+    <rect x="420" y="405" width="140" height="70" fill="white" stroke="#569A31" stroke-width="2" rx="3"/>
+    <text x="490" y="425" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle">AI Chatbot</text>
+    <text x="490" y="445" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">RAG-lite</text>
+    <text x="490" y="460" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">Groq integration</text>
+    
+    <rect x="580" y="405" width="140" height="70" fill="white" stroke="#569A31" stroke-width="2" rx="3"/>
+    <text x="650" y="425" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle">User Profiler</text>
+    <text x="650" y="445" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">Preference mgmt</text>
+    <text x="650" y="460" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">Rating history</text>
+    
+    <rect x="740" y="405" width="180" height="70" fill="white" stroke="#569A31" stroke-width="2" rx="3"/>
+    <text x="830" y="425" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle">Explainer Module</text>
+    <text x="830" y="445" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">Why this movie?</text>
+    <text x="830" y="460" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">Transparency</text>
+  </g>
+  
+  <!-- Arrow -->
+  <line x1="500" y1="490" x2="500" y2="530" stroke="#232F3E" stroke-width="3" marker-end="url(#arrowhead)"/>
+  
+  <!-- Data Layer -->
+  <g id="data-layer">
+    <rect x="50" y="530" width="900" height="120" fill="#BBDEFB" stroke="#3B48CC" stroke-width="3" rx="5"/>
+    <text x="500" y="560" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#3B48CC">
+      Data Layer
+    </text>
+    
+    <rect x="80" y="575" width="200" height="60" fill="white" stroke="#3B48CC" stroke-width="2" rx="3"/>
+    <text x="180" y="595" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle">RDS PostgreSQL</text>
+    <text x="180" y="613" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">Users, Ratings, Sessions</text>
+    
+    <rect x="300" y="575" width="200" height="60" fill="white" stroke="#3B48CC" stroke-width="2" rx="3"/>
+    <text x="400" y="595" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle">S3 Storage</text>
+    <text x="400" y="613" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">Parquet files, ML models</text>
+    
+    <rect x="520" y="575" width="200" height="60" fill="white" stroke="#3B48CC" stroke-width="2" rx="3"/>
+    <text x="620" y="595" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle">MovieLens Dataset</text>
+    <text x="620" y="613" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">10K movies, 105K ratings</text>
+    
+    <rect x="740" y="575" width="180" height="60" fill="white" stroke="#3B48CC" stroke-width="2" rx="3"/>
+    <text x="830" y="595" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle">Cache Layer</text>
+    <text x="830" y="613" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">In-memory matrices</text>
+  </g>
+  
+  <!-- External Services -->
+  <g id="external">
+    <rect x="750" y="80" width="200" height="70" fill="#E1BEE7" stroke="#9C27B0" stroke-width="2" rx="5"/>
+    <text x="850" y="105" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle">External Services</text>
+    <text x="850" y="127" font-family="Arial, sans-serif" font-size="11" text-anchor="middle">Groq API (LLM)</text>
+    <text x="850" y="143" font-family="Arial, sans-serif" font-size="11" text-anchor="middle">CloudWatch (Logs)</text>
+  </g>
+  
+  <line x1="850" y1="150" x2="735" y2="290" stroke="#9C27B0" stroke-width="2" stroke-dasharray="5,5"/>
+  
+  <!-- Key Features Box -->
+  <g id="features">
+    <rect x="50" y="660" width="900" height="30" fill="#F5F5F5" stroke="#232F3E" stroke-width="2" rx="3"/>
+    <text x="500" y="682" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#232F3E">
+      Production-Ready | 25/25 Tests Passing | JWT Auth | Bcrypt Hashing | CORS Enabled | AWS Ready
+    </text>
+  </g>
+  
+  <!-- Arrow marker definition -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#232F3E"/>
+    </marker>
+  </defs>
+</svg>

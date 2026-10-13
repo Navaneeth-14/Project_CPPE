@@ -1,0 +1,119 @@
+<svg viewBox="0 0 900 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Title -->
+  <text x="450" y="30" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#232F3E">
+    User Workflow - CineMatch
+  </text>
+  
+  <!-- Step 1: Sign Up -->
+  <g id="step1">
+    <circle cx="150" cy="100" r="30" fill="#FF9900" stroke="#232F3E" stroke-width="2"/>
+    <text x="150" y="108" font-family="Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="white">1</text>
+    <rect x="50" y="150" width="200" height="100" fill="#FFF3E0" stroke="#FF9900" stroke-width="2" rx="5"/>
+    <text x="150" y="180" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#232F3E">Sign Up</text>
+    <text x="150" y="205" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#666">Create account with</text>
+    <text x="150" y="225" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#666">email & password</text>
+  </g>
+  
+  <!-- Arrow -->
+  <line x1="250" y1="200" x2="300" y2="200" stroke="#232F3E" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- Step 2: Select Genres -->
+  <g id="step2">
+    <circle cx="450" cy="100" r="30" fill="#FF9900" stroke="#232F3E" stroke-width="2"/>
+    <text x="450" y="108" font-family="Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="white">2</text>
+    <rect x="350" y="150" width="200" height="120" fill="#FFF3E0" stroke="#FF9900" stroke-width="2" rx="5"/>
+    <text x="450" y="180" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#232F3E">Select Genres</text>
+    <text x="450" y="205" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#666">Pick favorite genres:</text>
+    <text x="450" y="225" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#666">Action, Drama, Sci-Fi,</text>
+    <text x="450" y="242" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#666">Comedy, etc.</text>
+  </g>
+  
+  <!-- Arrow -->
+  <line x1="550" y1="210" x2="600" y2="210" stroke="#232F3E" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- Step 3: Get Recommendations -->
+  <g id="step3">
+    <circle cx="750" cy="100" r="30" fill="#FF9900" stroke="#232F3E" stroke-width="2"/>
+    <text x="750" y="108" font-family="Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="white">3</text>
+    <rect x="650" y="150" width="200" height="120" fill="#FFF3E0" stroke="#FF9900" stroke-width="2" rx="5"/>
+    <text x="750" y="180" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#232F3E">Get Recommendations</text>
+    <text x="750" y="205" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#666">View personalized</text>
+    <text x="750" y="225" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#666">movie suggestions</text>
+    <text x="750" y="245" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#666">(Hybrid algorithm)</text>
+  </g>
+  
+  <!-- Arrow down -->
+  <line x1="750" y1="270" x2="750" y2="320" stroke="#232F3E" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- Step 4: Rate Movies -->
+  <g id="step4">
+    <circle cx="750" cy="350" r="30" fill="#3B48CC" stroke="#232F3E" stroke-width="2"/>
+    <text x="750" y="358" font-family="Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="white">4</text>
+    <rect x="650" y="400" width="200" height="120" fill="#E3F2FD" stroke="#3B48CC" stroke-width="2" rx="5"/>
+    <text x="750" y="430" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#232F3E">Rate Movies</text>
+    <text x="750" y="455" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#666">Provide feedback:</text>
+    <text x="750" y="475" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#666">👍 Like / 👎 Dislike</text>
+    <text x="750" y="495" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#666">(Improves suggestions)</text>
+  </g>
+  
+  <!-- Arrow back -->
+  <path d="M 650 460 L 600 460 L 600 560 L 150 560 L 150 520" stroke="#232F3E" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  <text x="400" y="550" font-family="Arial, sans-serif" font-size="11" fill="#232F3E">System learns preferences</text>
+  
+  <!-- Step 5: Explore Features -->
+  <g id="step5">
+    <circle cx="150" cy="350" r="30" fill="#3B48CC" stroke="#232F3E" stroke-width="2"/>
+    <text x="150" y="358" font-family="Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="white">5</text>
+    <rect x="50" y="400" width="200" height="120" fill="#E3F2FD" stroke="#3B48CC" stroke-width="2" rx="5"/>
+    <text x="150" y="430" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#232F3E">Explore Features</text>
+    <text x="150" y="455" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#666">✓ Mood-based picks</text>
+    <text x="150" y="475" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#666">✓ AI Chatbot</text>
+    <text x="150" y="495" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#666">✓ Profile settings</text>
+  </g>
+  
+  <!-- Continuous Loop Arrow -->
+  <path d="M 250 460 L 350 460" stroke="#232F3E" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Step 6: Refined Recommendations -->
+  <g id="step6">
+    <circle cx="450" cy="350" r="30" fill="#569A31" stroke="#232F3E" stroke-width="2"/>
+    <text x="450" y="358" font-family="Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="white">6</text>
+    <rect x="350" y="400" width="200" height="120" fill="#F1F8E9" stroke="#569A31" stroke-width="2" rx="5"/>
+    <text x="450" y="430" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#232F3E">Better Suggestions</text>
+    <text x="450" y="455" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#666">More accurate</text>
+    <text x="450" y="475" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#666">recommendations</text>
+    <text x="450" y="495" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#666">(Personalized over time)</text>
+  </g>
+  
+  <!-- Loop arrow -->
+  <path d="M 550 460 L 650 460" stroke="#232F3E" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Legend -->
+  <g id="legend">
+    <rect x="50" y="650" width="800" height="120" fill="#F5F5F5" stroke="#232F3E" stroke-width="2" rx="5"/>
+    <text x="450" y="680" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#232F3E">
+      Key Features
+    </text>
+    
+    <text x="100" y="710" font-family="Arial, sans-serif" font-size="13" fill="#232F3E">
+      🎯 Content-Based Filtering (genre matching)
+    </text>
+    <text x="100" y="735" font-family="Arial, sans-serif" font-size="13" fill="#232F3E">
+      🤝 Collaborative Filtering (user similarity)
+    </text>
+    
+    <text x="500" y="710" font-family="Arial, sans-serif" font-size="13" fill="#232F3E">
+      💬 AI Chatbot (Groq API)
+    </text>
+    <text x="500" y="735" font-family="Arial, sans-serif" font-size="13" fill="#232F3E">
+      😊 Mood-Based Recommendations
+    </text>
+  </g>
+  
+  <!-- Arrow marker definition -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#232F3E"/>
+    </marker>
+  </defs>
+</svg>
