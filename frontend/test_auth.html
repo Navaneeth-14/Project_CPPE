@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Auth Test</title>
+  <style>
+    body { font-family: sans-serif; padding: 40px; background: #0f0f13; color: #e8e8f0; }
+    input { padding: 8px; margin: 5px 0; display: block; width: 300px; }
+    button { padding: 10px 20px; margin: 10px 0; }
+    .msg { padding: 10px; margin: 10px 0; border-radius: 4px; }
+    .error { background: #6b2d3e; color: #f87171; }
+    .success { background: #2a5040; color: #4ade80; }
+  </style>
+</head>
+<body>
+  <h1>CineMatch Auth Test</h1>
+  
+  <h2>Health Check</h2>
+  <button onclick="testHealth()">Test /health</button>
+  <div id="healthResult"></div>
+  
+  <h2>Signup Test</h2>
+  <input type="text" id="username" placeholder="username" value="testuser">
+  <input type="email" id="email" placeholder="email" value="test@example.com">
+  <input type="password" id="password" placeholder="password" value="password123">
+  <button onclick="testSignup()">Test Signup</button>
+  <div id="signupResult"></div>
+  
+  <h2>Console</h2>
+  <div id="console" style="background: #1a1a22; padding: 10px; border-radius: 4px; font-family: monospace; font-size: 12px;"></div>
+
+  <script>
+    function log(msg) {
+      const timestamp = new Date().toLocaleTimeString();
+      document.getElementById('console').innerHTML += `[${timestamp}] ${msg}<br>`;
+      console.log(msg);
+    }
+
+    async function testHealth() {
+      log('Testing /health endpoint...');
+      try {
+        const res = await fetch('http://127.0.0.1:8000/health');
+        const data = await res.json();
+        log(`Health check: ${JSON.stringify(data)}`);
+        document.getElementById('healthResult').innerHTML = `<div class="msg success">${JSON.stringify(data, null, 2)}</div>`;
+      } catch(e) {
+        log(`Error: ${e.message}`);
+        document.getElementById('healthResult').innerHTML = `<div class="msg error">${e.message}</div>`;
+      }
+    }
+
+    async function testSignup() {
+      const username = document.getElementById('username').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      
+      log(`Testing signup: ${username} / ${email}`);
+      
+      try {
+        const res = await fetch('http://127.0.0.1:8000/auth/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, email, password })
+        });
+        
+        log(`Response status: ${res.status}`);
+        const data = await res.json();
+        log(`Response: ${JSON.stringify(data)}`);
+        
+        if (res.ok) {
+          document.getElementById('signupResult').innerHTML = `<div class="msg success">Success!<br><pre>${JSON.stringify(data, null, 2)}</pre></div>`;
+        } else {
+          document.getElementById('signupResult').innerHTML = `<div class="msg error">Error: ${data.detail || JSON.stringify(data)}</div>`;
+        }
+      } catch(e) {
+        log(`Error: ${e.message}`);
+        document.getElementById('signupResult').innerHTML = `<div class="msg error">${e.message}</div>`;
+      }
+    }
+    
+    // Test on load
+    window.addEventListener('load', () => {
+      log('Page loaded');
+      testHealth();
+    });
+  </script>
+</body>
+</html>

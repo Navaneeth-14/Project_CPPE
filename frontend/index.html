@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CineMatch</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0f0f13; --surface: #1a1a22; --surface2: #22222e; --surface3: #2a2a38;
+      --border: #2e2e3e; --accent: #7c6af7; --accent2: #e85d9b;
+      --text: #e8e8f0; --muted: #8888aa; --success: #4ade80; --danger: #f87171;
+      --radius: 12px; --radius-sm: 8px;
+    }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; font-size: 15px; line-height: 1.6; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+
+    /* ══════ Auth Screen ══════ */
+    #authScreen { width: 100%; max-width: 440px; padding: 20px; }
+    .auth-logo { width: 64px; height: 64px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 20px; }
+    .auth-title { text-align: center; font-size: 26px; font-weight: 700; margin-bottom: 8px; }
+    .auth-subtitle { text-align: center; font-size: 14px; color: var(--muted); margin-bottom: 32px; }
+    .auth-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; }
+    .auth-tabs { display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
+    .auth-tab { flex: 1; padding: 10px; font-size: 14px; color: var(--muted); cursor: pointer; border-radius: var(--radius-sm) var(--radius-sm) 0 0; border: 1px solid transparent; border-bottom: none; transition: all 0.18s; background: none; text-align: center; }
+    .auth-tab.active { background: var(--surface2); border-color: var(--border); color: var(--text); font-weight: 600; margin-bottom: -1px; border-bottom: 1px solid var(--surface); }
+    .form-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+    .form-field label { font-size: 12px; color: var(--muted); font-weight: 500; }
+    input[type="text"], input[type="email"], input[type="password"] { background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: var(--radius-sm); padding: 11px 14px; font-size: 14px; width: 100%; outline: none; transition: border-color 0.18s; }
+    input:focus { border-color: var(--accent); }
+    .btn { border: none; border-radius: var(--radius-sm); padding: 11px 20px; font-size: 14px; font-weight: 600; cursor: pointer; transition: opacity 0.18s; width: 100%; }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; }
+    .btn-primary:hover:not(:disabled) { opacity: 0.88; }
+    .msg-box { border-radius: var(--radius); padding: 12px 14px; font-size: 13px; margin-bottom: 14px; display: none; }
+    .msg-box.visible { display: block; }
+    .msg-box.error { background: #2a1520; border: 1px solid #6b2d3e; color: var(--danger); }
+    .msg-box.info  { background: #12231a; border: 1px solid #2a5040; color: #4ade80; }
+
+    /* ══════ Main App (hidden until logged in) ══════ */
+    #mainApp { display: none; width: 100%; min-height: 100vh; }
+    #mainApp.visible { display: block; }
+    .shell { max-width: 920px; margin: 0 auto; padding: 0 20px 80px; }
+
+    /* ── Header ── */
+    header { padding: 32px 0 24px; display: flex; align-items: center; gap: 14px; border-bottom: 1px solid var(--border); margin-bottom: 28px; }
+    .logo { width: 40px; height: 40px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 19px; flex-shrink: 0; }
+    .brand h1 { font-size: 19px; font-weight: 700; }
+    .brand p  { font-size: 12px; color: var(--muted); }
+    .header-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+    .status-pill { font-size: 12px; padding: 4px 10px; border-radius: 20px; background: var(--surface2); border: 1px solid var(--border); color: var(--muted); display: flex; align-items: center; gap: 6px; }
+    .status-pill .dot { width: 7px; height: 7px; border-radius: 50%; background: #555; }
+    .status-pill.online .dot { background: var(--success); }
+    .user-badge { font-size: 13px; padding: 6px 14px; border-radius: 20px; background: var(--surface2); border: 1px solid var(--border); color: var(--text); font-weight: 600; }
+    .logout-btn { font-size: 12px; padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.18s; }
+    .logout-btn:hover { border-color: var(--danger); color: var(--danger); }
+
+    /* ── Stats ── */
+    .stats-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; }
+    .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 18px; }
+    .stat-value { font-size: 20px; font-weight: 700; color: var(--accent); }
+    .stat-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+    /* ── Nav tabs ── */
+    .nav-tabs { display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
+    .nav-tab { padding: 9px 16px; font-size: 13px; color: var(--muted); cursor: pointer; border-radius: var(--radius-sm) var(--radius-sm) 0 0; border: 1px solid transparent; border-bottom: none; transition: all 0.18s; background: none; }
+    .nav-tab:hover { color: var(--text); background: var(--surface2); }
+    .nav-tab.active { background: var(--surface); border-color: var(--border); color: var(--text); font-weight: 600; margin-bottom: -1px; border-bottom: 1px solid var(--surface); }
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    /* ── Cards / inputs ── */
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; margin-bottom: 16px; }
+    .card h2 { font-size: 14px; font-weight: 600; margin-bottom: 14px; }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; }
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field label { font-size: 12px; color: var(--muted); font-weight: 500; }
+    input[type="number"] { background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: var(--radius-sm); padding: 9px 13px; font-size: 14px; outline: none; width: 120px; }
+    input[type="number"]:focus { border-color: var(--accent); }
+    .btn-ghost  { background: var(--surface2); border: 1px solid var(--border); color: var(--muted); padding: 9px 18px; }
+    .btn-ghost.active, .btn-ghost:hover:not(:disabled) { border-color: var(--accent); color: var(--text); }
+    .toggle-group { display: flex; gap: 6px; }
+    .toggle-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--muted); border-radius: var(--radius-sm); padding: 9px 13px; font-size: 13px; cursor: pointer; transition: all 0.18s; }
+    .toggle-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    /* ── Mood chips ── */
+    .mood-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+    .mood-chip { padding: 6px 14px; border-radius: 20px; background: var(--surface2); border: 1px solid var(--border); color: var(--muted); cursor: pointer; font-size: 13px; transition: all 0.18s; }
+    .mood-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    /* ── Genre grid ── */
+    .genre-grid { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+    .genre-chip { padding: 5px 13px; border-radius: 20px; background: var(--surface2); border: 1px solid var(--border); color: var(--muted); cursor: pointer; font-size: 12px; transition: all 0.18s; user-select: none; }
+    .genre-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    /* ── Loading bar ── */
+    .loading-bar { height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 2px; margin-bottom: 16px; animation: pulse 1.2s ease-in-out infinite; display: none; }
+    .loading-bar.visible { display: block; }
+    @keyframes pulse { 0%,100%{opacity:.4} 50%{opacity:1} }
+
+    /* ── Results ── */
+    .results-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .results-header h2 { font-size: 14px; font-weight: 600; }
+    .results-meta { font-size: 12px; color: var(--muted); }
+
+    /* ── Movie card ── */
+    .movie-list { display: flex; flex-direction: column; gap: 10px; }
+    .movie-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; display: grid; grid-template-columns: 32px 1fr auto; gap: 0 14px; align-items: start; transition: border-color 0.18s; animation: slide-in 0.22s ease both; }
+    @keyframes slide-in { from{opacity:0;transform:translateY(7px)} to{opacity:1;transform:translateY(0)} }
+    .movie-card:hover { border-color: var(--accent); }
+    .movie-card.mood-match { border-color: #7c6af755; }
+    .rank { font-size: 16px; font-weight: 700; color: var(--muted); padding-top: 2px; text-align: right; }
+    .rank.top3 { color: var(--accent); }
+    .movie-title { font-size: 14px; font-weight: 600; margin-bottom: 5px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
+    .chip { font-size: 11px; padding: 2px 7px; border-radius: 20px; background: var(--surface2); border: 1px solid var(--border); color: var(--muted); }
+    .chip.mood { background: #2a1f4a; border-color: var(--accent); color: var(--accent); }
+    .score-bars { display: flex; flex-direction: column; gap: 4px; }
+    .score-row { display: flex; align-items: center; gap: 7px; font-size: 11px; color: var(--muted); }
+    .score-label { width: 58px; flex-shrink: 0; }
+    .bar-track { flex: 1; height: 4px; background: var(--surface2); border-radius: 2px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
+    .bar-fill.content { background: #60a5fa; }
+    .bar-fill.collab  { background: #f472b6; }
+    .bar-fill.hybrid  { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+    .score-val { width: 32px; text-align: right; font-variant-numeric: tabular-nums; }
+    .explanation { margin-top: 10px; padding: 9px 12px; background: var(--surface2); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; font-size: 13px; color: var(--muted); line-height: 1.5; }
+    .ai-tag { font-size: 10px; font-weight: 700; letter-spacing: .5px; color: var(--accent); text-transform: uppercase; display: block; margin-bottom: 3px; }
+    .hybrid-badge { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; padding-top: 2px; }
+    .hybrid-num { font-size: 18px; font-weight: 800; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hybrid-lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .4px; }
+
+    /* ── Chat ── */
+    .chat-window { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); display: flex; flex-direction: column; height: 440px; overflow: hidden; }
+    .chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+    .bubble { max-width: 80%; padding: 10px 14px; border-radius: 14px; font-size: 13px; line-height: 1.5; animation: slide-in 0.18s ease both; }
+    .bubble.user { background: var(--accent); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+    .bubble.bot  { background: var(--surface2); color: var(--text); align-self: flex-start; border-bottom-left-radius: 4px; }
+    .bubble.typing { color: var(--muted); font-style: italic; }
+    .chat-input-row { display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--border); background: var(--surface); }
+    .chat-input-row input { flex: 1; background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: var(--radius-sm); padding: 9px 13px; font-size: 13px; outline: none; min-height: 38px; }
+    .chat-input-row input:focus { border-color: var(--accent); }
+    #chatInput { background: #22222e !important; border: 1px solid #2e2e3e !important; color: #e8e8f0 !important; }
+
+    .empty-state { text-align: center; padding: 50px 20px; color: var(--muted); }
+    .empty-state .icon { font-size: 36px; margin-bottom: 10px; }
+
+    @media (max-width: 600px) {
+      body { align-items: flex-start; padding-top: 40px; }
+      .stats-bar { grid-template-columns: 1fr; }
+      .movie-card { grid-template-columns: 26px 1fr; }
+      .hybrid-badge { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════════════════════ -->
+<!--  AUTH SCREEN (shown first)                                                   -->
+<!-- ════════════════════════════════════════════════════════════════════════════ -->
+<div id="authScreen">
+  <div class="auth-logo">🎬</div>
+  <h1 class="auth-title">CineMatch</h1>
+  <p class="auth-subtitle">Personalized movie recommendations powered by AI</p>
+
+  <div class="auth-card">
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="setAuthTab('login')">Sign in</button>
+      <button class="auth-tab" onclick="setAuthTab('signup')">Create account</button>
+    </div>
+
+    <!-- Login form -->
+    <div id="loginForm">
+      <div class="form-field">
+        <label>Username</label>
+        <input type="text" id="loginUser" placeholder="your username" onkeydown="if(event.key==='Enter')doLogin()" />
+      </div>
+      <div class="form-field">
+        <label>Password</label>
+        <input type="password" id="loginPass" placeholder="••••••" onkeydown="if(event.key==='Enter')doLogin()" />
+      </div>
+      <div class="msg-box error" id="loginError"></div>
+      <button class="btn btn-primary" id="loginBtn" onclick="doLogin()">Sign in</button>
+    </div>
+
+    <!-- Signup form -->
+    <div id="signupForm" style="display:none">
+      <div class="form-field">
+        <label>Username</label>
+        <input type="text" id="signupUser" placeholder="pick a username" />
+      </div>
+      <div class="form-field">
+        <label>Email</label>
+        <input type="email" id="signupEmail" placeholder="you@example.com" />
+      </div>
+      <div class="form-field">
+        <label>Password</label>
+        <input type="password" id="signupPass" placeholder="at least 6 characters" onkeydown="if(event.key==='Enter')doSignup()" />
+      </div>
+      <div class="msg-box error" id="signupError"></div>
+      <button class="btn btn-primary" id="signupBtn" onclick="doSignup()">Create account</button>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:20px;font-size:12px;color:var(--muted)">
+    <div class="status-pill" id="statusPillAuth" style="display:inline-flex">
+      <span class="dot"></span>
+      <span id="statusTextAuth">Connecting…</span>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════════ -->
+<!--  MAIN APP (shown after login)                                                -->
+<!-- ════════════════════════════════════════════════════════════════════════════ -->
+<div id="mainApp">
+<div class="shell">
+
+  <header>
+    <div class="logo">🎬</div>
+    <div class="brand">
+      <h1>CineMatch</h1>
+      <p>Your personal movie companion</p>
+    </div>
+    <div class="header-right">
+      <div class="status-pill online"><span class="dot"></span><span>Online</span></div>
+      <div class="user-badge" id="userBadge">User</div>
+      <button class="logout-btn" onclick="doLogout()">Sign out</button>
+    </div>
+  </header>
+
+  <div class="stats-bar">
+    <div class="stat-card"><div class="stat-value" id="statMovies">—</div><div class="stat-label">Movies</div></div>
+    <div class="stat-card"><div class="stat-value" id="statRatings">—</div><div class="stat-label">Ratings</div></div>
+    <div class="stat-card"><div class="stat-value" id="statUsers">—</div><div class="stat-label">Users</div></div>
+  </div>
+
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="switchTab('my')">🎯 My Picks</button>
+    <button class="nav-tab" onclick="switchTab('mood')">🎭 Mood</button>
+    <button class="nav-tab" onclick="switchTab('chat')">💬 Chat</button>
+    <button class="nav-tab" onclick="switchTab('profile')">👤 Profile</button>
+  </div>
+
+  <!-- ══════ MY PICKS PANEL ══════ -->
+  <div class="panel active" id="panel-my">
+    <div class="card">
+      <h2>Recommendations for you</h2>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Based on your saved genre preferences</p>
+      <div class="row">
+        <div class="field"><label>How many?</label><input type="number" id="myTopN" min="1" max="20" value="10" style="width:100px" /></div>
+        <button class="btn btn-primary" id="myRecBtn" onclick="fetchMyRecs()">Get my picks →</button>
+      </div>
+    </div>
+    <div class="loading-bar" id="myRecLoader"></div>
+    <div class="msg-box error" id="myRecError"></div>
+    <div id="myRecResults"></div>
+  </div>
+
+  <!-- ══════ MOOD PANEL ══════ -->
+  <div class="panel" id="panel-mood">
+    <div class="card">
+      <h2>What's your vibe?</h2>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Pick a mood and we'll adjust your recommendations to match.</p>
+      <div class="mood-grid" id="moodGrid"></div>
+      <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+        <div class="field"><label>How many?</label><input type="number" id="moodTopN" min="1" max="20" value="8" style="width:100px" /></div>
+        <button class="btn btn-primary" id="moodBtn" onclick="fetchMoodRecs()">Find mood picks →</button>
+      </div>
+    </div>
+    <div class="loading-bar" id="moodLoader"></div>
+    <div class="msg-box error" id="moodError"></div>
+    <div id="moodResults"></div>
+  </div>
+
+  <!-- ══════ CHAT PANEL ══════ -->
+  <div class="panel" id="panel-chat">
+    <div class="chat-window">
+      <div style="padding:16px 18px 12px;border-bottom:1px solid var(--border)">
+        <h2 style="margin:0">💬 Ask me anything</h2>
+        <p style="font-size:12px;color:var(--muted);margin-top:3px">Questions, recommendations, plot summaries — I'm here for it all.</p>
+      </div>
+      <div class="chat-messages" id="chatMessages">
+        <div class="bubble bot">Hey! I'm CineMatch 🎬 Ask me about any movie, get recommendations, or just chat about films.</div>
+      </div>
+      <div class="chat-input-row" style="display:flex !important;gap:10px !important;padding:16px !important;border-top:1px solid rgba(126,106,247,0.15) !important;background:transparent !important;align-items:center !important;">
+        <input type="text" id="chatInput" placeholder="Ask about any movie, get recommendations..." onkeydown="if(event.key==='Enter')sendChat()" style="flex:1 1 auto !important;background:rgba(42,42,56,0.5) !important;border:1px solid rgba(126,106,247,0.3) !important;color:#e8e8f0 !important;border-radius:10px !important;padding:12px 16px !important;font-size:14px !important;outline:none !important;min-height:44px !important;min-width:200px !important;box-sizing:border-box !important;transition:all 0.2s ease !important;" onfocus="this.style.borderColor='rgba(126,106,247,0.6)';this.style.background='rgba(42,42,56,0.8)';" onblur="this.style.borderColor='rgba(126,106,247,0.3)';this.style.background='rgba(42,42,56,0.5)';" />
+        <button class="btn btn-primary" id="chatSendBtn" onclick="sendChat()" style="flex:0 0 auto !important;padding:12px 28px !important;background:linear-gradient(135deg,#7c6af7,#e85d9b) !important;border:none !important;border-radius:10px !important;color:white !important;font-size:14px !important;font-weight:600 !important;cursor:pointer !important;white-space:nowrap !important;transition:opacity 0.2s ease !important;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ PROFILE PANEL ══════ -->
+  <div class="panel" id="panel-profile">
+    <div class="card">
+      <h2>Your genre preferences</h2>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:10px">Pick the genres you enjoy. We'll use this to personalize your recommendations.</p>
+      <div class="genre-grid" id="genreGrid"></div>
+      <div class="msg-box error" id="genreError"></div>
+      <div class="msg-box info"  id="genreInfo"></div>
+      <button class="btn btn-primary" id="saveGenresBtn" onclick="saveGenres()" style="margin-top:8px">Save preferences</button>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════════════════════
+//  State
+// ══════════════════════════════════════════════════════════════════════════════
+const S = {
+  token: localStorage.getItem('cm_token'),
+  user:  JSON.parse(localStorage.getItem('cm_user') || 'null'),
+  selectedMood: null,
+  moods: [],
+  allGenres: [],
+  selectedGenres: new Set(),
+  chatHistory: [],
+};
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  Init
+// ══════════════════════════════════════════════════════════════════════════════
+async function init() {
+  console.log('[INIT] Starting initialization...');
+  
+  // Check health
+  try {
+    console.log('[INIT] Fetching /health...');
+    const res = await fetch('/health');
+    console.log('[INIT] Health response status:', res.status);
+    const health = await res.json();
+    console.log('[INIT] Health data:', health);
+    
+    if (health.status === 'ok') {
+      console.log('[INIT] Health OK, updating status pill...');
+      const pill = document.getElementById('statusPillAuth');
+      const text = document.getElementById('statusTextAuth');
+      console.log('[INIT] Found elements:', { pill: !!pill, text: !!text });
+      
+      if (pill) pill.classList.add('online');
+      if (text) text.textContent = 'Ready to go';
+      console.log('[INIT] Status updated to Ready');
+    }
+  } catch(e) {
+    console.error('[INIT] Health check failed:', e);
+    const text = document.getElementById('statusTextAuth');
+    if (text) text.textContent = 'Connection issue';
+  }
+
+  // If already logged in, go straight to app
+  console.log('[INIT] Checking for existing session...', { hasToken: !!S.token, hasUser: !!S.user });
+  if (S.token && S.user) {
+    console.log('[INIT] Found session, loading app...');
+    await loadApp();
+  } else {
+    console.log('[INIT] No session, staying on auth screen');
+  }
+  
+  console.log('[INIT] Initialization complete');
+}
+
+async function loadApp() {
+  document.getElementById('authScreen').style.display = 'none';
+  document.getElementById('mainApp').classList.add('visible');
+  document.getElementById('userBadge').textContent = S.user.username;
+
+  try {
+    const [stats, moods, genres] = await Promise.all([
+      api('/stats'),
+      api('/moods'),
+      api('/genres'),
+    ]);
+    document.getElementById('statMovies').textContent  = stats.total_movies.toLocaleString();
+    document.getElementById('statRatings').textContent = stats.total_ratings.toLocaleString();
+    document.getElementById('statUsers').textContent   = stats.active_users.toLocaleString();
+
+    S.moods = moods;
+    buildMoodGrid();
+
+    S.allGenres = genres.genres;
+    buildGenreGrid();
+
+    // Load saved genres
+    const saved = await api('/me/genres');
+    saved.genres.forEach(g => {
+      S.selectedGenres.add(g);
+      document.querySelectorAll('.genre-chip').forEach(c => {
+        if (c.dataset.genre === g) c.classList.add('active');
+      });
+    });
+
+    // Auto-load user's picks
+    if (saved.genres.length > 0) fetchMyRecs();
+  } catch(e) {
+    console.error('Failed to load app data:', e);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  API helper
+// ══════════════════════════════════════════════════════════════════════════════
+async function api(path, opts = {}) {
+  const headers = { 'Content-Type': 'application/json', ...(opts.headers || {}) };
+  if (S.token) headers['Authorization'] = `Bearer ${S.token}`;
+  const res = await fetch(path, { ...opts, headers });
+  const data = await res.json();
+  if (!res.ok) throw data;
+  return data;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  Auth
+// ══════════════════════════════════════════════════════════════════════════════
+function setAuthTab(t) {
+  document.querySelectorAll('.auth-tab').forEach((el, i) => el.classList.toggle('active', i === (t === 'login' ? 0 : 1)));
+  document.getElementById('loginForm').style.display  = t === 'login'  ? '' : 'none';
+  document.getElementById('signupForm').style.display = t === 'signup' ? '' : 'none';
+}
+
+async function doLogin() {
+  const username = document.getElementById('loginUser').value.trim();
+  const password = document.getElementById('loginPass').value;
+  
+  if (!username || !password) {
+    showMsg('loginError', 'Username and password required.');
+    return;
+  }
+  
+  clearMsg('loginError');
+  setBtnLoading('loginBtn', true, 'Sign in');
+  try {
+    const data = await api('/auth/login', { method: 'POST', body: JSON.stringify({ username, password }) });
+    setSession(data.token, data.user);
+    await loadApp();
+  } catch(e) { 
+    console.error('Login error:', e);
+    showMsg('loginError', e.detail || 'Invalid username or password.');
+  }
+  finally { setBtnLoading('loginBtn', false, 'Sign in'); }
+}
+
+async function doSignup() {
+  const username = document.getElementById('signupUser').value.trim();
+  const email    = document.getElementById('signupEmail').value.trim();
+  const password = document.getElementById('signupPass').value;
+  
+  if (!username || !email || !password) {
+    showMsg('signupError', 'All fields are required.');
+    return;
+  }
+  if (password.length < 6) {
+    showMsg('signupError', 'Password must be at least 6 characters.');
+    return;
+  }
+  
+  clearMsg('signupError');
+  setBtnLoading('signupBtn', true, 'Create account');
+  try {
+    const data = await api('/auth/signup', { method: 'POST', body: JSON.stringify({ username, email, password }) });
+    setSession(data.token, data.user);
+    await loadApp();
+  } catch(e) { 
+    console.error('Signup error:', e);
+    showMsg('signupError', e.detail || (e.message || 'Signup failed. Please try a different username.'));
+  }
+  finally { setBtnLoading('signupBtn', false, 'Create account'); }
+}
+
+function setSession(token, user) {
+  S.token = token; S.user = user;
+  localStorage.setItem('cm_token', token);
+  localStorage.setItem('cm_user', JSON.stringify(user));
+}
+
+function doLogout() {
+  S.token = null; S.user = null;
+  localStorage.removeItem('cm_token');
+  localStorage.removeItem('cm_user');
+  location.reload();
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  API helper
+// ══════════════════════════════════════════════════════════════════════════════
+async function api(path, opts = {}) {
+  const headers = { 'Content-Type': 'application/json', ...(opts.headers || {}) };
+  if (S.token) headers['Authorization'] = `Bearer ${S.token}`;
+  const res = await fetch(path, { ...opts, headers });
+  const data = await res.json();
+  if (!res.ok) throw data;
+  return data;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  Init & App Loading
+// ══════════════════════════════════════════════════════════════════════════════
+async function init() {
+  // Check health
+  try {
+    const res = await fetch('/health');
+    const health = await res.json();
+    if (health.status === 'ok') {
+      const pill = document.getElementById('statusPillAuth');
+      const text = document.getElementById('statusTextAuth');
+      if (pill) pill.classList.add('online');
+      if (text) text.textContent = 'Ready to go';
+    }
+  } catch(e) {
+    console.error('Health check failed:', e);
+    const text = document.getElementById('statusTextAuth');
+    if (text) text.textContent = 'Connection issue';
+  }
+
+  // If already logged in, go straight to app
+  if (S.token && S.user) {
+    await loadApp();
+  }
+}
+
+async function loadApp() {
+  document.getElementById('authScreen').style.display = 'none';
+  document.getElementById('mainApp').classList.add('visible');
+  document.getElementById('userBadge').textContent = S.user.username;
+
+  try {
+    const [stats, moods, genres] = await Promise.all([
+      api('/stats'),
+      api('/moods'),
+      api('/genres'),
+    ]);
+    document.getElementById('statMovies').textContent  = stats.total_movies.toLocaleString();
+    document.getElementById('statRatings').textContent = stats.total_ratings.toLocaleString();
+    document.getElementById('statUsers').textContent   = stats.active_users.toLocaleString();
+
+    S.moods = moods;
+    buildMoodGrid();
+
+    S.allGenres = genres.genres;
+    buildGenreGrid();
+
+    // Load saved genres
+    const saved = await api('/me/genres');
+    saved.genres.forEach(g => {
+      S.selectedGenres.add(g);
+      document.querySelectorAll('.genre-chip').forEach(c => {
+        if (c.dataset.genre === g) c.classList.add('active');
+      });
+    });
+
+    // Auto-load user's picks
+    if (saved.genres.length > 0) fetchMyRecs();
+  } catch(e) {
+    console.error('Failed to load app data:', e);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  Tabs
+// ══════════════════════════════════════════════════════════════════════════════
+function switchTab(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  const tabs = document.querySelectorAll('.nav-tab');
+  const map = { my: 0, mood: 1, chat: 2, profile: 3 };
+  tabs[map[name]]?.classList.add('active');
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  My Picks
+// ══════════════════════════════════════════════════════════════════════════════
+async function fetchMyRecs() {
+  const topN = parseInt(document.getElementById('myTopN').value);
+  clearMsg('myRecError');
+  setLoader('myRecLoader', true);
+  setBtnLoading('myRecBtn', true, 'Get my picks →');
+  document.getElementById('myRecResults').innerHTML = '';
+  try {
+    const data = await api(`/me/recommend?top_n=${topN}`);
+    renderMovieList(data.recommendations, 'myRecResults', { header: `Based on your taste in ${data.preferred_genres.join(', ')}` });
+  } catch(e) { showMsg('myRecError', e.detail || 'Make sure you have saved your genre preferences in the Profile tab first.'); }
+  finally { setLoader('myRecLoader', false); setBtnLoading('myRecBtn', false, 'Get my picks →'); }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  Mood
+// ══════════════════════════════════════════════════════════════════════════════
+function buildMoodGrid() {
+  const grid = document.getElementById('moodGrid');
+  grid.innerHTML = '';
+  S.moods.forEach(m => {
+    const chip = document.createElement('button');
+    chip.className = 'mood-chip';
+    chip.textContent = m.label;
+    chip.dataset.key = m.key;
+    chip.onclick = () => { S.selectedMood = (S.selectedMood === m.key ? null : m.key); document.querySelectorAll('.mood-chip').forEach(c => c.classList.toggle('active', c.dataset.key === S.selectedMood)); };
+    grid.appendChild(chip);
+  });
+}
+
+async function fetchMoodRecs() {
+  if (!S.selectedMood) return showMsg('moodError', 'Pick a mood first.');
+  const topN = parseInt(document.getElementById('moodTopN').value);
+  clearMsg('moodError');
+  setLoader('moodLoader', true);
+  setBtnLoading('moodBtn', true, 'Find mood picks →');
+  document.getElementById('moodResults').innerHTML = '';
+  try {
+    // Use the authenticated user's profile + mood boost
+    const plain = await api(`/me/recommend?top_n=${Math.min(topN*3,40)}`);
+    const boosted = applyMoodBoostClient(plain.recommendations, S.selectedMood);
+    const moodLabel = S.moods.find(m => m.key === S.selectedMood)?.label || S.selectedMood;
+    renderMovieList(boosted.slice(0, topN), 'moodResults', { withMood: true, header: `${moodLabel} picks for you` });
+  } catch(e) { showMsg('moodError', e.detail || 'Something went wrong.'); }
+  finally { setLoader('moodLoader', false); setBtnLoading('moodBtn', false, 'Find mood picks →'); }
+}
+
+function applyMoodBoostClient(recs, mood) {
+  const moodGenres = {
+    'something_light':   ['Comedy','Animation','Family','Musical'],
+    'intense':           ['Thriller','Crime','Mystery','Action'],
+    'mind_bending':      ['Sci-Fi','Mystery','Fantasy','Thriller'],
+    'feel_good':         ['Comedy','Romance','Adventure','Family'],
+    'emotional':         ['Drama','Romance'],
+    'action_packed':     ['Action','Adventure','War'],
+    'dark_and_gritty':   ['Crime','Drama','Thriller','War','Horror'],
+    'something_classic': ['Drama','Romance','Mystery'],
+  };
+  const target = new Set(moodGenres[mood] || []);
+  const boosted = recs.map(r => {
+    const match = r.genres.some(g => target.has(g));
+    return { ...r, hybrid_score: r.hybrid_score + (match ? 0.25 : 0), mood_match: match };
+  });
+  return boosted.sort((a,b) => b.hybrid_score - a.hybrid_score);
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  Chat
+// ══════════════════════════════════════════════════════════════════════════════
+function addBubble(text, role) {
+  const box = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = `bubble ${role}`;
+  div.textContent = text;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+  return div;
+}
+
+async function sendChat() {
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+  document.getElementById('chatSendBtn').disabled = true;
+
+  addBubble(msg, 'user');
+  S.chatHistory.push({ role: 'user', content: msg });
+
+  const typing = addBubble('Thinking…', 'bot typing');
+
+  try {
+    const data = await api('/chat', {
+      method: 'POST',
+      body: JSON.stringify({ message: msg, history: S.chatHistory.slice(-6) }),
+    });
+    typing.className = 'bubble bot';
+    typing.textContent = data.reply;
+    S.chatHistory.push({ role: 'assistant', content: data.reply });
+  } catch(e) {
+    typing.className = 'bubble bot';
+    typing.textContent = "Sorry, couldn't reach the AI right now.";
+  }
+  document.getElementById('chatSendBtn').disabled = false;
+  document.getElementById('chatMessages').scrollTop = 9999;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  Profile
+// ══════════════════════════════════════════════════════════════════════════════
+function buildGenreGrid() {
+  const grid = document.getElementById('genreGrid');
+  grid.innerHTML = '';
+  S.allGenres.forEach(g => {
+    const chip = document.createElement('button');
+    chip.className = 'genre-chip';
+    chip.textContent = g;
+    chip.dataset.genre = g;
+    if (S.selectedGenres.has(g)) chip.classList.add('active');
+    chip.onclick = () => {
+      if (S.selectedGenres.has(g)) { S.selectedGenres.delete(g); chip.classList.remove('active'); }
+      else { S.selectedGenres.add(g); chip.classList.add('active'); }
+    };
+    grid.appendChild(chip);
+  });
+}
+
+async function saveGenres() {
+  if (S.selectedGenres.size === 0) return showMsg('genreError', 'Pick at least one genre.');
+  clearMsg('genreError'); clearMsg('genreInfo');
+  setBtnLoading('saveGenresBtn', true, 'Save preferences');
+  try {
+    await api('/me/genres', { method: 'POST', body: JSON.stringify({ genres: [...S.selectedGenres] }) });
+    showMsg('genreInfo', 'Preferences saved! Go to "My Picks" to get recommendations.', 'info');
+  } catch(e) { showMsg('genreError', e.detail || 'Could not save.'); }
+  finally { setBtnLoading('saveGenresBtn', false, 'Save preferences'); }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  Render movie list (shared)
+// ══════════════════════════════════════════════════════════════════════════════
+function renderMovieList(recs, containerId, opts = {}) {
+  const area = document.getElementById(containerId);
+  if (!recs.length) {
+    area.innerHTML = `<div class="empty-state"><div class="icon">🤷</div><p>No results found.</p></div>`;
+    return;
+  }
+  const headerHTML = opts.header ? `<div class="results-header"><h2>${esc(opts.header)}</h2><span class="results-meta">${recs.length} movies</span></div>` : '';
+  area.innerHTML = headerHTML + `<div class="movie-list" id="${containerId}-list"></div>`;
+  const list = document.getElementById(`${containerId}-list`);
+
+  recs.forEach((rec, i) => {
+    const card = document.createElement('div');
+    card.className = 'movie-card' + (opts.withMood && rec.mood_match ? ' mood-match' : '');
+    card.style.animationDelay = `${i * 35}ms`;
+
+    const pct = v => Math.round((v || 0) * 100);
+    const moodTag = opts.withMood && rec.mood_match ? `<span class="chip mood">✦ mood match</span>` : '';
+    const explainHTML = opts.withExplain && rec.explanation ? `<div class="explanation"><span class="ai-tag">AI</span>${esc(rec.explanation)}</div>` : '';
+
+    card.innerHTML = `
+      <div class="rank ${i < 3 ? 'top3' : ''}">#${i+1}</div>
+      <div>
+        <div class="movie-title">${esc(rec.title)}</div>
+        <div class="chips">${rec.genres.map(g => `<span class="chip">${esc(g)}</span>`).join('')}${moodTag}</div>
+        <div class="score-bars">
+          <div class="score-row"><span class="score-label">Genre</span><div class="bar-track"><div class="bar-fill content" style="width:${pct(rec.content_score)}%"></div></div><span class="score-val">${pct(rec.content_score)}%</span></div>
+          <div class="score-row"><span class="score-label">Community</span><div class="bar-track"><div class="bar-fill collab" style="width:${pct(rec.collab_score)}%"></div></div><span class="score-val">${pct(rec.collab_score)}%</span></div>
+          <div class="score-row"><span class="score-label">Overall</span><div class="bar-track"><div class="bar-fill hybrid" style="width:${Math.min(pct(rec.hybrid_score),100)}%"></div></div><span class="score-val">${pct(rec.hybrid_score)}%</span></div>
+        </div>
+        ${explainHTML}
+      </div>
+      <div class="hybrid-badge"><span class="hybrid-num">${pct(rec.hybrid_score)}%</span><span class="hybrid-lbl">match</span></div>`;
+    list.appendChild(card);
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  UI helpers
+// ══════════════════════════════════════════════════════════════════════════════
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function showMsg(id, msg, type = 'error') { const el = document.getElementById(id); el.textContent = msg; el.className = `msg-box ${type} visible`; }
+function clearMsg(id) { const el = document.getElementById(id); el.textContent = ''; el.className = 'msg-box'; }
+function setLoader(id, on) { document.getElementById(id).classList.toggle('visible', on); }
+function setBtnLoading(id, on, label) { const btn = document.getElementById(id); btn.disabled = on; btn.textContent = on ? 'Loading…' : label; }
+
+init();
+</script>
+</body>
+</html>
